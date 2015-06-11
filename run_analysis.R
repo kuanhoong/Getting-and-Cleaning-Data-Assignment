@@ -69,4 +69,4 @@ extractedData <- data.table(extractedData)
 # that contains the processed data.
 tidyData <- aggregate(. ~Subject + Activity, extractedData, mean)
 tidyData <- tidyData[order(tidyData$Subject,tidyData$Activity),]
-write.table(tidyData, file = "Tidy.txt", row.names = FALSE)
+write.table(tidyData, file = "tidy_data.txt", row.names = FALSE)
