@@ -1,30 +1,31 @@
-#library used
+# Initialize library used
 library(data.table)
 library(dplyr)
 
-#Read Supporting Metadata
+# Read Supporting Metadata
 featureNames <- read.table("UCI HAR Dataset/features.txt")
 activityLabels <- read.table("UCI HAR Dataset/activity_labels.txt", header = FALSE)
 
-#Read training data
+# Read the training data
 subjectTrain <- read.table("UCI HAR Dataset/train/subject_train.txt", header = FALSE)
 activityTrain <- read.table("UCI HAR Dataset/train/y_train.txt", header = FALSE)
 featuresTrain <- read.table("UCI HAR Dataset/train/X_train.txt", header = FALSE)
 
-#Read test data
+# Read the test data
 subjectTest <- read.table("UCI HAR Dataset/test/subject_test.txt", header = FALSE)
 activityTest <- read.table("UCI HAR Dataset/test/y_test.txt", header = FALSE)
 featuresTest <- read.table("UCI HAR Dataset/test/X_test.txt", header = FALSE)
 
-#Part 1 - Merge the training and the test sets to create one data set
+# Part 1 - Merge the training and the test sets to create one data set
+# by using rbind
 subject <- rbind(subjectTrain, subjectTest)
 activity <- rbind(activityTrain, activityTest)
 features <- rbind(featuresTrain, featuresTest)
 
-#Naming the columns
+# Naming the columns
 colnames(features) <- t(featureNames[2])
 
-#Merge the data
+# Merge the data by using cbind
 colnames(activity) <- "Activity"
 colnames(subject) <- "Subject"
 completeData <- cbind(features,activity,subject)
@@ -58,15 +59,16 @@ names(extractedData)<-gsub("-freq()", "Frequency", names(extractedData), ignore.
 names(extractedData)<-gsub("angle", "Angle", names(extractedData))
 names(extractedData)<-gsub("gravity", "Gravity", names(extractedData))
 
-#Part 5 - From the data set in step 4, creates a second, independent
+# Part 5 - From the data set in step 4, creates a second, independent
 # tidy data set with the average of each variable for each activity and each subject
 
 extractedData$Subject <- as.factor(extractedData$Subject)
 extractedData <- data.table(extractedData)
 
-#create tidyData as a data set with average for each activity and subject. 
-#Then, we order the enties in tidyData and write it into data file Tidy.txt
+# Finally, create tidyData as a data set with average for each activity and subject. 
+# Order the enties in tidyData and write it into data file tidy_data.txt file
 # that contains the processed data.
 tidyData <- aggregate(. ~Subject + Activity, extractedData, mean)
 tidyData <- tidyData[order(tidyData$Subject,tidyData$Activity),]
 write.table(tidyData, file = "tidy_data.txt", row.names = FALSE)
+
